@@ -1,38 +1,36 @@
 import { useState } from "react";
 import { searchFlights } from "../api/amadeus";
-import type { FlightOffer } from "../types/flight";
-import SearchForm from "../components/SearchForm";
 import FlightList from "../components/FlightList";
 
 export default function Home() {
-  const [flights, setFlights] = useState<FlightOffer[]>([]);
+  const [flights, setFlights] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
- const handleSearch = async () => {
-  try {
+  const handleSearch = async () => {
     setLoading(true);
-
     const data = await searchFlights({
       origin: "NBO",
       destination: "LHR",
-      date: "2026-01-25",
+      date: "2026-01-25", // update to a valid date
     });
-
     console.log("FLIGHTS RESPONSE:", data);
-
-    setFlights(Array.isArray(data) ? data : []);
-  } catch (err) {
-    console.error(err);
-    setFlights([]);
-  } finally {
+    setFlights(data);
     setLoading(false);
-  }
-};
+  };
 
   return (
-    <>
-      <SearchForm onSearch={handleSearch} />
-      {loading ? <p>Loading...</p> : <FlightList flights={flights} />}
-    </>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Flight Search</h1>
+      <button
+        onClick={handleSearch}
+        className="px-4 py-2 bg-blue-600 text-white rounded"
+      >
+        Search Flights
+      </button>
+
+      {loading && <p>Loading...</p>}
+
+      <FlightList flights={flights} />
+    </div>
   );
 }
